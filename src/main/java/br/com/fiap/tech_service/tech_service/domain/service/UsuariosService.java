@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -16,6 +17,11 @@ public class UsuariosService {
 
     @Autowired
     private UsuariosRepository usuarioRepository;
+
+    public List<Usuarios> buscarTodosUsuarios() {
+        List<Usuarios> usuarios = usuarioRepository.findAll();
+        return usuarios;
+    }
 
     public Usuarios criarUsuario(String nome, String email) {
         Usuarios usuario = new Usuarios();

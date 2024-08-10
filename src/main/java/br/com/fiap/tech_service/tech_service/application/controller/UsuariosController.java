@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/usuarios")
 public class UsuariosController {
@@ -15,10 +18,21 @@ public class UsuariosController {
     @Autowired
     private UsuariosService usuarioService;
 
+    @GetMapping("/buscarTodos")
+    public ResponseEntity<List<UsuariosDTO>> buscarTodosUsuarios() {
+        List<Usuarios> usuario = usuarioService.buscarTodosUsuarios();
+        /*Transforma cada usuário da lista em um DTO*/
+        return ResponseEntity.ok().body(
+                usuario.stream()
+                        .map(usuarios -> UsuariosMapper.toDTO(usuarios))
+                        .collect(Collectors.toList())
+        );
+    }
+
     @PostMapping("/criar")
-    public UsuariosDTO criarUsuario(@RequestParam String nome, @RequestParam String email) {
+    public ResponseEntity criarUsuario(@RequestParam String nome, @RequestParam String email) {
         Usuarios usuario = usuarioService.criarUsuario(nome, email);
-        return UsuariosMapper.toDTO(usuario);
+        return ResponseEntity.ok(UsuariosMapper.toDTO(usuario));
     }
 
     @GetMapping("/buscar")
