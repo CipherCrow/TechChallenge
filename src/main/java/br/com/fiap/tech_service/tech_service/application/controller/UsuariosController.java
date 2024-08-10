@@ -5,6 +5,7 @@ import br.com.fiap.tech_service.tech_service.domain.entities.Usuarios;
 import br.com.fiap.tech_service.tech_service.application.mapper.UsuariosMapper;
 import br.com.fiap.tech_service.tech_service.domain.service.UsuariosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,21 +31,21 @@ public class UsuariosController {
     }
 
     @PostMapping("/criar")
-    public ResponseEntity criarUsuario(@RequestParam String nome, @RequestParam String email) {
+    public ResponseEntity<UsuariosDTO> criarUsuario(@RequestParam String nome, @RequestParam String email) {
         Usuarios usuario = usuarioService.criarUsuario(nome, email);
-        return ResponseEntity.ok(UsuariosMapper.toDTO(usuario));
+        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(UsuariosMapper.toDTO(usuario));
     }
 
     @GetMapping("/buscar")
-    public UsuariosDTO buscarUsuario(@RequestParam Long idUsuario) {
+    public ResponseEntity<UsuariosDTO> buscarUsuario(@RequestParam Long idUsuario) {
         Usuarios usuario = usuarioService.buscarUsuario(idUsuario);
-        return UsuariosMapper.toDTO(usuario);
+        return ResponseEntity.ok(UsuariosMapper.toDTO(usuario));
     }
 
     @PutMapping("/atualizar")
-    public UsuariosDTO atualizarUsuario(@RequestParam Long idUsuario,@RequestBody UsuariosDTO usuariosDTO) {
+    public ResponseEntity<UsuariosDTO> atualizarUsuario(@RequestParam Long idUsuario,@RequestBody UsuariosDTO usuariosDTO) {
         Usuarios usuarioAtualizado = usuarioService.atualizarUsuario(idUsuario, usuariosDTO);
-        return UsuariosMapper.toDTO(usuarioAtualizado);
+        return ResponseEntity.ok(UsuariosMapper.toDTO(usuarioAtualizado));
     }
 
     @DeleteMapping("/deletar")
