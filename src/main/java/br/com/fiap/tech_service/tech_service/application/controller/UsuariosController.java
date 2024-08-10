@@ -31,8 +31,8 @@ public class UsuariosController {
     }
 
     @PostMapping("/criar")
-    public ResponseEntity<UsuariosDTO> criarUsuario(@RequestParam String nome, @RequestParam String email) {
-        Usuarios usuario = usuarioService.criarUsuario(nome, email);
+    public ResponseEntity<UsuariosDTO> criarUsuario(@RequestBody UsuariosDTO usuariosDTO) {
+        Usuarios usuario = usuarioService.criarUsuario(usuariosDTO);
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(UsuariosMapper.toDTO(usuario));
     }
 

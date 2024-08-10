@@ -23,10 +23,11 @@ public class UsuariosService {
         return usuarios;
     }
 
-    public Usuarios criarUsuario(String nome, String email) {
+    public Usuarios criarUsuario(UsuariosDTO usuariosDTO) {
         Usuarios usuario = new Usuarios();
-        usuario.setNome(nome);
-        usuario.setEmail(email);
+        usuario.setNome(usuariosDTO.nome());
+        usuario.setEmail(usuariosDTO.email());
+        usuario.setEndereco(usuariosDTO.endereco());
         return usuarioRepository.save(usuario);
     }
 
@@ -39,6 +40,7 @@ public class UsuariosService {
         Usuarios usuario = buscarUsuario(idUsuario);
         usuario.setNome(usuariosDTO.nome());
         usuario.setEmail(usuariosDTO.email());
+        usuario.setEndereco(usuariosDTO.endereco());
         usuario = usuarioRepository.save(usuario);
         return usuario;
     }
