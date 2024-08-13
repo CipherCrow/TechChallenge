@@ -266,4 +266,5 @@ public class ChamadosService {
             chamado.setStatus(status);
             chamadoRepository.save(chamado);
         }
+    }
 }
