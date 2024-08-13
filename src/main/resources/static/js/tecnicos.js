@@ -71,11 +71,12 @@ function atualizarTecnico() {
     const id = document.getElementById('id-atualizar').value;
     const nome = document.getElementById('nome-atualizar').value;
     const email = document.getElementById('email-atualizar').value;
+    const equipe = document.getElementById('equipe-atualizar').value;
 
     fetch(`${apiUrl}/atualizar`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, nome, email, })
+        body: JSON.stringify({ id, nome, email,equipe })
     })
         .then(response => {
             if (!response.ok) {
