@@ -236,4 +236,16 @@ public class ChamadosService {
         logger.info("Buscando chamados para a equipe: {}", equipe);
         return chamadoRepository.findByEquipe(equipe);
     }
+    public void removerAtendenteDosChamados(List<Chamados> chamados) {
+        for (Chamados chamado : chamados) {
+            chamado.setTecnico(null);
+            chamadoRepository.save(chamado);
+        }
+    }
+    public void alterarStatusDosChamados(List<Chamados> chamados,Status status) {
+        for (Chamados chamado : chamados) {
+            chamado.setStatus(status);
+            chamadoRepository.save(chamado);
+        }
+    }
 }
