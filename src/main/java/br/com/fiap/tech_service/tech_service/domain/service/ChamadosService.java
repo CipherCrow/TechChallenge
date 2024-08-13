@@ -7,6 +7,9 @@ import br.com.fiap.tech_service.tech_service.domain.entities.enums.Status;
 import br.com.fiap.tech_service.tech_service.domain.repository.ChamadosRepository;
 import br.com.fiap.tech_service.tech_service.domain.repository.TecnicosRepository;
 import br.com.fiap.tech_service.tech_service.domain.repository.UsuariosRepository;
+import br.com.fiap.tech_service.tech_service.domain.exceptions.ChamadoNotFoundException;
+import br.com.fiap.tech_service.tech_service.domain.exceptions.TecnicoNotFoundException;
+import br.com.fiap.tech_service.tech_service.domain.exceptions.UsuarioNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +41,7 @@ public class ChamadosService {
 
             Chamados chamado = new Chamados();
             chamado.setUsuario(usuarioRepository.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
+                    .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado")));
             chamado.setEquipe(tipoSolicitacao);
             chamado.setDescricao(descricao);
             chamado.setStatus(Status.ABERTO);
@@ -70,7 +73,7 @@ public class ChamadosService {
             logger.info("Enviando chamado ID: {} para a área: {}", chamadoId, equipe);
 
             Chamados chamado = chamadoRepository.findById(chamadoId)
-                    .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
             chamado.setStatus(Status.ENVIADO_PARA_AREA);
             chamado.setEquipe(equipe);
 
@@ -91,7 +94,7 @@ public class ChamadosService {
             logger.info("Visualizando chamado ID: {}", id);
 
             Chamados chamado = chamadoRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
             chamado.setDataVisualizacao(LocalDateTime.now());
             chamado.setStatus(Status.VISUALIZADO);
 
@@ -104,9 +107,9 @@ public class ChamadosService {
 
     public Chamados tratarChamado(Long id, Long tecnicoId) {
         Chamados chamado = chamadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
         Tecnicos tecnico = tecnicoRepository.findById(tecnicoId)
-                .orElseThrow(() -> new RuntimeException("Técnico não encontrado"));
+                .orElseThrow(() -> new TecnicoNotFoundException("Técnico não encontrado"));
 
         if (!tecnico.getEquipe().equals(chamado.getEquipe())) {
             throw new RuntimeException("O técnico não pode tratar chamados de outra equipe");
@@ -131,10 +134,10 @@ public class ChamadosService {
 
     public Chamados solucionarChamado(Long id, String descricaoSolucao) {
         Chamados chamado = chamadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
 
         if (!chamado.getStatus().equals(Status.EM_EXECUCAO)) {
-            throw new RuntimeException("O chamado deve estar em execucao para ser solucionado");
+            throw new RuntimeException("O chamado deve estar em execução para ser solucionado");
         }
 
         chamado.setDescricao(descricaoSolucao);
@@ -142,7 +145,7 @@ public class ChamadosService {
         chamado.setStatus(Status.AGUARDANDO_VALIDACAO);
 
         Tecnicos tecnico = tecnicoRepository.findById(chamado.getTecnico().getId())
-                .orElseThrow(() -> new RuntimeException("Técnico não encontrado"));
+                .orElseThrow(() -> new TecnicoNotFoundException("Técnico não encontrado"));
 
         try {
             String emailUsuario = chamado.getUsuario().getEmail();
@@ -161,7 +164,7 @@ public class ChamadosService {
             logger.info("Reavaliando chamado ID: {}", id);
 
             Chamados chamado = chamadoRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
 
             chamado.setDataReavaliacao(LocalDateTime.now());
             chamado.setStatus(Status.REAVALIADO);
@@ -177,74 +180,60 @@ public class ChamadosService {
         logger.info("Iniciando validação do chamado com ID: {}", chamadoId);
         try {
             Chamados chamado = chamadoRepository.findById(chamadoId)
-                    .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+
+            if (!Status.AGUARDANDO_VALIDACAO.equals(chamado.getStatus())) {
+                throw new RuntimeException("Chamado não pode ser validado, pois não está no status de 'Aguardando Validação'");
+            }
 
             if (isValidado) {
                 chamado.setStatus(Status.VALIDADO);
-                String emailEquipe = emailService.obterEmailEquipe(chamado.getEquipe());
-                String emailChamadoValidado = emailService.gerarEmailValidacaoChamado(chamadoId,chamado.getUsuario().getNome());
-                emailService.enviarEmail(emailEquipe, "Chamado validado", emailChamadoValidado);
-                logger.info("Chamado ID {} validado com sucesso. Enviando e-mail para a equipe.", chamadoId);
+
+                logger.info("Chamado ID: {} foi validado e finalizado", chamadoId);
             } else {
                 chamado.setStatus(Status.ABERTO);
-                chamado.setPriorizado(true);
-                String emailEquipe = emailService.obterEmailEquipe(chamado.getEquipe());
-                String emailChamadoInsuficiente = emailService.gerarEmailValidacaoChamado(chamadoId,chamado.getUsuario().getNome());
-                emailService.enviarEmail(emailEquipe, "Chamado reaberto com prioridade", emailChamadoInsuficiente);
-                logger.info("Chamado ID {} não validado. Marcando como priorizado e reabrindo o chamado.", chamadoId);
+                logger.info("Chamado ID: {} foi marcado como inválido", chamadoId);
             }
+            String emailEquipe = emailService.obterEmailEquipe(chamado.getEquipe());
+            String emailChamadoValidado = emailService.gerarEmailValidacaoChamado(chamado.getId(), chamado.getUsuario().getNome(), chamado.getEquipe(), String.valueOf(chamado.getStatus()));
+            emailService.enviarEmail(emailEquipe, "Chamado enviado para a área", emailChamadoValidado);
+            logger.info("Notificação de chamado analisado pelo usuario enviado para a equipe: {}", emailEquipe);
 
             return chamadoRepository.save(chamado);
         } catch (Exception e) {
-            logger.error("Erro ao valiar chamado: {}", e.getMessage(), e);
+            logger.error("Erro ao validar chamado: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao validar chamado: " + e.getMessage(), e);
-
         }
     }
 
-
     public Chamados encerrarChamado(Long id) {
-        Chamados chamado = chamadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+        try {
+            logger.info("Encerrando chamado ID: {}", id);
 
-        if (!chamado.getStatus().equals(Status.VALIDADO)) {
-            throw new RuntimeException("O chamado deve estar validado para ser encerrado");
+            Chamados chamado = chamadoRepository.findById(id)
+                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+
+            if (!Status.VALIDADO.equals(chamado.getStatus())) {
+                throw new RuntimeException("O chamado deve estar validado para ser encerrado");
+            }
+
+            chamado.setStatus(Status.ENCERRADO);
+            chamado.setDataEncerramento(LocalDateTime.now());
+
+            return chamadoRepository.save(chamado);
+        } catch (Exception e) {
+            logger.error("Erro ao encerrar chamado: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao encerrar chamado: " + e.getMessage(), e);
         }
-
-        chamado.setDataEncerramento(LocalDateTime.now());
-        chamado.setStatus(Status.ENCERRADO);
-
-        String emailUsuario = chamado.getUsuario().getEmail();
-        String emailEncerramento = emailService.gerarEmailEncerramentoChamado(
-                chamado.getId(),
-                chamado.getDataEncerramento(),
-                chamado.getDescricao(),
-                chamado.getTecnico().getNome()
-        );
-        emailService.enviarEmail(emailUsuario, "Chamado encerrado com sucesso", emailEncerramento);
-
-        return chamadoRepository.save(chamado);
     }
 
     public List<Chamados> buscarChamadosPorStatus(Status status) {
-        try {
-            List<Chamados> chamados = chamadoRepository.findByStatus(status);
-            logger.info("Busca de chamados por status: " + status + " realizada com sucesso.");
-            return chamados;
-        } catch (Exception e) {
-            logger.error("Erro ao buscar chamados por status: ", e);
-            throw new RuntimeException("Não foi possível buscar chamados por status. Tente novamente.");
-        }
+        logger.info("Buscando chamados com status: {}", status);
+        return chamadoRepository.findByStatus(status);
     }
 
     public List<Chamados> buscarChamadosPorEquipe(Equipe equipe) {
-        try {
-            List<Chamados> chamados = chamadoRepository.findByEquipe(equipe);
-            logger.info("Busca de chamados por equipe: " + equipe + " realizada com sucesso.");
-            return chamados;
-        } catch (Exception e) {
-            logger.error("Erro ao buscar chamados por equipe: ", e);
-            throw new RuntimeException("Não foi possível buscar chamados por equipe. Tente novamente.");
-        }
+        logger.info("Buscando chamados para a equipe: {}", equipe);
+        return chamadoRepository.findByEquipe(equipe);
     }
 }

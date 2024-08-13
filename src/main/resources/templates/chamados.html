@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,149 +7,97 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1>Gerenciamento de Chamados</h1>
-<nav>
-    <ul>
-        <li><a href="#abrir-chamado">Abrir Chamado</a></li>
-        <li><a href="#enviar-para-area">Enviar para Área</a></li>
-        <li><a href="#visualizar-chamado">Visualizar Chamado</a></li>
-        <li><a href="#tratar-chamado">Tratar Chamado</a></li>
-        <li><a href="#solucionar-chamado">Solucionar Chamado</a></li>
-        <li><a href="#reavaliar-chamado">Reavaliar Chamado</a></li>
-        <li><a href="#validar-chamado">Validar Chamado</a></li>
-        <li><a href="#encerrar-chamado">Encerrar Chamado</a></li>
-        <li><a href="#buscar-status">Buscar Chamados por Status</a></li>
-        <li><a href="#buscar-equipe">Buscar Chamados por Equipe</a></li>
-    </ul>
-</nav>
+<div class="container">
+    <h1>Gerenciamento de Chamados</h1>
 
-<section id="abrir-chamado">
-    <h2>Abrir Chamado</h2>
-    <form id="formAbrirChamado">
-        <label for="usuarioId">ID do Usuário:</label>
-        <input type="number" id="usuarioId" name="usuarioId" required>
-        <label for="tipoSolicitacao">Tipo de Solicitação:</label>
-        <select id="tipoSolicitacao" name="tipoSolicitacao" required>
-            <option value="EQUIPE1">Equipe 1</option>
-            <option value="EQUIPE2">Equipe 2</option>
-        </select>
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" required></textarea>
-        <button type="submit">Abrir Chamado</button>
-    </form>
-</section>
+    <!-- Abrir Chamado -->
+    <div class="form-section">
+        <h2>Abrir Chamado</h2>
+        <form id="abrir-chamado-form">
+            <input type="number" id="usuario-id" placeholder="ID do Usuário" required>
+            <input type="text" id="tipo-solicitacao" placeholder="Tipo de Solicitação (Equipe)" required>
+            <input type="text" id="descricao" placeholder="Descrição" required>
+            <button type="button" onclick="abrirChamado()">Abrir</button>
+        </form>
+        <div id="resultado-abrir"></div>
+    </div>
 
-<section id="enviar-para-area">
-    <h2>Enviar Chamado para Área</h2>
-    <form id="formEnviarParaArea">
-        <label for="chamadoId">ID do Chamado:</label>
-        <input type="number" id="chamadoId" name="chamadoId" required>
-        <label for="equipe">Equipe:</label>
-        <select id="equipe" name="equipe" required>
-            <option value="EQUIPE1">Equipe 1</option>
-            <option value="EQUIPE2">Equipe 2</option>
-        </select>
-        <button type="submit">Enviar para Área</button>
-    </form>
-</section>
+    <!-- Enviar Chamado para Área -->
+    <div class="form-section">
+        <h2>Enviar Chamado para Área</h2>
+        <input type="number" id="id-enviar" placeholder="ID do Chamado" required>
+        <input type="text" id="equipe-enviar" placeholder="Equipe" required>
+        <button onclick="enviarParaArea()">Enviar</button>
+        <div id="resultado-enviar"></div>
+    </div>
 
-<section id="visualizar-chamado">
-    <h2>Visualizar Chamado</h2>
-    <form id="formVisualizarChamado">
-        <label for="idChamado">ID do Chamado:</label>
-        <input type="number" id="idChamado" name="idChamado" required>
-        <button type="submit">Visualizar Chamado</button>
-    </form>
-    <div id="resultadoVisualizarChamado"></div>
-</section>
+    <!-- Visualizar Chamado -->
+    <div class="form-section">
+        <h2>Visualizar Chamado</h2>
+        <input type="number" id="id-visualizar" placeholder="ID do Chamado" required>
+        <button onclick="visualizarChamado()">Visualizar</button>
+        <div id="resultado-visualizar"></div>
+    </div>
 
-<section id="tratar-chamado">
-    <h2>Tratar Chamado</h2>
-    <form id="formTratarChamado">
-        <label for="chamadoIdTratar">ID do Chamado:</label>
-        <input type="number" id="chamadoIdTratar" name="chamadoIdTratar" required>
-        <label for="observacoes">Observações:</label>
-        <textarea id="observacoes" name="observacoes" required></textarea>
-        <button type="submit">Tratar Chamado</button>
-    </form>
-</section>
+    <!-- Tratar Chamado -->
+    <div class="form-section">
+        <h2>Tratar Chamado</h2>
+        <input type="number" id="id-tratar" placeholder="ID do Chamado" required>
+        <input type="number" id="id-tecnico-tratar" placeholder="ID do Técnico" required>
+        <button onclick="tratarChamado()">Tratar</button>
+        <div id="resultado-tratar"></div>
+    </div>
 
-<section id="solucionar-chamado">
-    <h2>Solucionar Chamado</h2>
-    <form id="formSolucionarChamado">
-        <label for="chamadoIdSolucionar">ID do Chamado:</label>
-        <input type="number" id="chamadoIdSolucionar" name="chamadoIdSolucionar" required>
-        <label for="solucao">Solução:</label>
-        <textarea id="solucao" name="solucao" required></textarea>
-        <button type="submit">Solucionar Chamado</button>
-    </form>
-</section>
+    <!-- Solucionar Chamado -->
+    <div class="form-section">
+        <h2>Solucionar Chamado</h2>
+        <input type="number" id="id-solucionar" placeholder="ID do Chamado" required>
+        <input type="text" id="descricao-solucionar" placeholder="Descrição da Solução" required>
+        <button onclick="solucionarChamado()">Solucionar</button>
+        <div id="resultado-solucionar"></div>
+    </div>
 
-<section id="reavaliar-chamado">
-    <h2>Reavaliar Chamado</h2>
-    <form id="formReavaliarChamado">
-        <label for="chamadoIdReavaliar">ID do Chamado:</label>
-        <input type="number" id="chamadoIdReavaliar" name="chamadoIdReavaliar" required>
-        <label for="novaDescricao">Nova Descrição:</label>
-        <textarea id="novaDescricao" name="novaDescricao" required></textarea>
-        <button type="submit">Reavaliar Chamado</button>
-    </form>
-</section>
+    <!-- Reavaliar Chamado -->
+    <div class="form-section">
+        <h2>Reavaliar Chamado</h2>
+        <input type="number" id="id-reavaliar" placeholder="ID do Chamado" required>
+        <button onclick="reavaliarChamado()">Reavaliar</button>
+        <div id="resultado-reavaliar"></div>
+    </div>
 
-<section id="validar-chamado">
-    <h2>Validar Chamado</h2>
-    <form id="formValidarChamado">
-        <label for="chamadoIdValidar">ID do Chamado:</label>
-        <input type="number" id="chamadoIdValidar" name="chamadoIdValidar" required>
-        <label for="validado">Validado:</label>
-        <select id="validado" name="validado" required>
-            <option value="true">Sim</option>
-            <option value="false">Não</option>
-        </select>
-        <button type="submit">Validar Chamado</button>
-    </form>
-</section>
+    <!-- Validar Chamado -->
+    <div class="form-section">
+        <h2>Validar Chamado</h2>
+        <input type="number" id="id-validar" placeholder="ID do Chamado" required>
+        <input type="text" id="is-validado" placeholder="Validado (true/false)" required>
+        <button onclick="validarChamado()">Validar</button>
+        <div id="resultado-validar"></div>
+    </div>
 
-<section id="encerrar-chamado">
-    <h2>Encerrar Chamado</h2>
-    <form id="formEncerrarChamado">
-        <label for="chamadoIdEncerrar">ID do Chamado:</label>
-        <input type="number" id="chamadoIdEncerrar" name="chamadoIdEncerrar" required>
-        <button type="submit">Encerrar Chamado</button>
-    </form>
-</section>
+    <!-- Encerrar Chamado -->
+    <div class="form-section">
+        <h2>Encerrar Chamado</h2>
+        <input type="number" id="id-encerrar" placeholder="ID do Chamado" required>
+        <button onclick="encerrarChamado()">Encerrar</button>
+        <div id="resultado-encerrar"></div>
+    </div>
 
-<section id="buscar-status">
-    <h2>Buscar Chamados por Status</h2>
-    <form id="formBuscarStatus">
-        <label for="status">Status:</label>
-        <select id="status" name="status" required>
-            <option value="ABERTO">Aberto</option>
-            <option value="ENVIADO_PARA_AREA">Enviado para Área</option>
-            <option value="TRATADO">Tratado</option>
-            <option value="SOLUCIONADO">Solucionado</option>
-            <option value="REAVALIADO">Reavaliado</option>
-            <option value="VALIDADO">Validado</option>
-            <option value="ENCERRADO">Encerrado</option>
-        </select>
-        <button type="submit">Buscar Chamados</button>
-    </form>
-    <div id="resultadoBuscaStatus"></div>
-</section>
+    <!-- Buscar Chamados por Status -->
+    <div class="form-section">
+        <h2>Buscar Chamados por Status</h2>
+        <input type="text" id="status-buscar" placeholder="Status" required>
+        <button onclick="buscarChamadosPorStatus()">Buscar</button>
+        <div id="resultado-buscar-status"></div>
+    </div>
 
-<section id="buscar-equipe">
-    <h2>Buscar Chamados por Equipe</h2>
-    <form id="formBuscarEquipe">
-        <label for="equipeBuscar">Equipe:</label>
-        <select id="equipeBuscar" name="equipeBuscar" required>
-            <option value="N3">N3/option>
-            <option value="PRESENCIAL">PRESENCIAL</option>
-            <option value="ATENDIMENTO">ATENDIMENTO</option>
-        </select>
-        <button type="submit">Buscar Chamados</button>
-    </form>
-    <div id="resultadoBuscaEquipe"></div>
-</section>
+    <!-- Buscar Chamados por Equipe -->
+    <div class="form-section">
+        <h2>Buscar Chamados por Equipe</h2>
+        <input type="text" id="equipe-buscar" placeholder="Equipe" required>
+        <button onclick="buscarChamadosPorEquipe()">Buscar</button>
+        <div id="resultado-buscar-equipe"></div>
+    </div>
+</div>
 
 <script src="/js/chamados.js"></script>
 </body>

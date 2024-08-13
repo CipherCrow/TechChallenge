@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
 public class UsuariosService {
 
@@ -44,17 +43,19 @@ public class UsuariosService {
     }
 
     public Usuarios atualizarUsuario(UsuariosDTO usuariosDTO) {
-        if (!usuarioRepository.existsById(usuariosDTO.id())) {
-            throw new IllegalArgumentException("Usuário não encontrado com ID: " + usuariosDTO.id());
+        if (usuariosDTO.id() == null) {
+            throw new IllegalArgumentException("ID não pode ser nulo");
         }
-        Usuarios usuario = usuarioRepository.findById(usuariosDTO.id()).get();
+        Usuarios usuario = usuarioRepository.findById(usuariosDTO.id())
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com ID: " + usuariosDTO.id()));
+
         usuario.setNome(usuariosDTO.nome());
         usuario.setEmail(usuariosDTO.email());
         usuario.setEndereco(usuariosDTO.endereco());
         return usuarioRepository.save(usuario);
     }
 
-    public String deletarUsuario(Long idUsuario) {
+    public void deletarUsuario(Long idUsuario) {
         if (idUsuario == null) {
             throw new IllegalArgumentException("ID não pode ser nulo");
         }
@@ -62,11 +63,8 @@ public class UsuariosService {
             throw new IllegalArgumentException("Usuário não encontrado com ID: " + idUsuario);
         }
         List<Chamados> chamados = chamadosRepository.findByUsuarioId(idUsuario);
-        for (Chamados chamado : chamados) {
-            chamadosRepository.delete(chamado);
-        }
-       usuarioRepository.deleteById(idUsuario);
-        return "ok";
-    }
+        chamadosRepository.deleteAll(chamados);
 
+        usuarioRepository.deleteById(idUsuario);
+    }
 }
