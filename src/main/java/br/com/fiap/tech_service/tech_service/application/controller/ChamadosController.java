@@ -1,6 +1,7 @@
 package br.com.fiap.tech_service.tech_service.application.controller;
 
 import br.com.fiap.tech_service.tech_service.application.dto.ChamadosDTO;
+import br.com.fiap.tech_service.tech_service.application.mapper.TecnicosMapper;
 import br.com.fiap.tech_service.tech_service.domain.entities.Chamados;
 import br.com.fiap.tech_service.tech_service.application.mapper.ChamadosMapper;
 import br.com.fiap.tech_service.tech_service.domain.entities.enums.Equipe;
@@ -23,7 +24,10 @@ public class ChamadosController {
     private ChamadosService chamadoService;
 
     @PostMapping("/abrir")
-    public ResponseEntity<Object> abrirChamado(@RequestParam Long usuarioId, @RequestParam Equipe tipoSolicitacao, @RequestParam String descricao) {
+    public ResponseEntity<Object> abrirChamado(
+            @RequestParam Long usuarioId,
+            @RequestParam Equipe tipoSolicitacao,
+            @RequestParam String descricao) {
         try {
             Chamados chamado = chamadoService.abrirChamado(usuarioId, tipoSolicitacao, descricao);
             return ResponseEntity.status(HttpStatus.CREATED).body(ChamadosMapper.toDTO(chamado));
@@ -52,8 +56,10 @@ public class ChamadosController {
         }
     }
 
-    @PutMapping("/tratar/{idChamado}")
-    public ResponseEntity<Object> tratarChamado(@RequestParam Long idChamado, @RequestParam Long idTecnico) {
+    @PutMapping("/tratar/{idChamado}/{idTecnico}")
+    public ResponseEntity<Object> tratarChamado(
+            @PathVariable Long idChamado,
+            @PathVariable Long idTecnico) {
         try {
             Chamados chamado = chamadoService.tratarChamado(idChamado, idTecnico);
             return ResponseEntity.ok(ChamadosMapper.toDTO(chamado));
@@ -63,7 +69,9 @@ public class ChamadosController {
     }
 
     @PutMapping("/solucionar/{id}")
-    public ResponseEntity<Object> solucionarChamado(@RequestParam Long id, @RequestParam String descricao) {
+    public ResponseEntity<Object> solucionarChamado(
+            @PathVariable Long id,
+            @RequestParam String descricao) {
         try {
             Chamados chamado = chamadoService.solucionarChamado(id, descricao);
             return ResponseEntity.ok(ChamadosMapper.toDTO(chamado));
@@ -73,7 +81,7 @@ public class ChamadosController {
     }
 
     @PutMapping("/reavaliar/{id}")
-    public ResponseEntity<Object> reavaliarChamado(@RequestParam Long id) {
+    public ResponseEntity<Object> reavaliarChamado(@PathVariable Long id) {
         try {
             Chamados chamado = chamadoService.reavaliarChamado(id);
             return ResponseEntity.ok(ChamadosMapper.toDTO(chamado));
@@ -84,8 +92,8 @@ public class ChamadosController {
 
     @PutMapping("/validar/{id}")
     public ResponseEntity<Object> validarChamado(
-            @RequestParam Long id,
-            @RequestParam boolean isValidado ){
+            @PathVariable Long id,
+            @RequestParam boolean isValidado ) {
         try {
             Chamados chamado = chamadoService.validarChamado(id, isValidado);
             return ResponseEntity.ok(ChamadosMapper.toDTO(chamado));
@@ -95,7 +103,7 @@ public class ChamadosController {
     }
 
     @PutMapping("/encerrar/{id}")
-    public ResponseEntity<Object> encerrarChamado(@RequestParam Long id) {
+    public ResponseEntity<Object> encerrarChamado(@PathVariable Long id) {
         try {
             Chamados chamado = chamadoService.encerrarChamado(id);
             return ResponseEntity.ok(ChamadosMapper.toDTO(chamado));
@@ -105,7 +113,7 @@ public class ChamadosController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Object>> buscarChamadosPorStatus(@RequestParam Status status) {
+    public ResponseEntity<List<Object>> buscarChamadosPorStatus(@PathVariable Status status) {
         try {
             List<Chamados> chamados = chamadoService.buscarChamadosPorStatus(status);
             List<ChamadosDTO> chamadosDTO = chamados.stream()
@@ -117,16 +125,21 @@ public class ChamadosController {
         }
     }
 
-    @GetMapping("/equipe/{equipe}")
-    public ResponseEntity<List<Object>> buscarChamadosPorEquipe(@RequestParam Equipe equipe) {
+    @GetMapping("/equipe")
+    public ResponseEntity<Object> buscarChamadosPorEquipe(@RequestParam Equipe equipe) {
         try {
-            List<Chamados> chamados = chamadoService.buscarChamadosPorEquipe(equipe);
-            List<ChamadosDTO> chamadosDTO = chamados.stream()
-                    .map(ChamadosMapper::toDTO)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(Collections.singletonList(chamadosDTO));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.badRequest().body(Collections.singletonList(ex.getMessage()));
+            List<Chamados> chamadosList = chamadoService.buscarChamadosPorEquipe(equipe);
+            if (chamadosList.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(
+                    chamadosList.stream()
+                            .map(ChamadosMapper::toDTO)
+                            .collect(Collectors.toList())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao buscar os chamados: " + e.getMessage());
         }
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,79 +7,55 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1>Gerenciamento de Técnicos</h1>
-<nav>
-    <ul>
-        <li><a href="#criarTecnico">Criar Técnico</a></li>
-        <li><a href="#buscarTecnico">Buscar Técnico</a></li>
-        <li><a href="#atualizarTecnico">Atualizar Técnico</a></li>
-        <li><a href="#deletarTecnico">Deletar Técnico</a></li>
-        <li><a href="#listarTecnicos">Listar Técnicos</a></li>
-    </ul>
-</nav>
+<div class="container">
+    <h1>Gerenciamento de Técnicos</h1>
 
-<!-- Criar Técnico -->
-<section id="criarTecnico">
-    <h2>Criar Técnico</h2>
-    <form id="formCriarTecnico">
-        <label for="idCriar">ID:</label>
-        <input type="number" id="idCriar" required><br>
-        <label for="nomeCriar">Nome:</label>
-        <input type="text" id="nomeCriar" required><br>
-        <label for="emailCriar">Email:</label>
-        <input type="email" id="emailCriar" required><br>
-        <label for="equipeCriar">Equipe:</label>
-        <input type="text" id="equipeCriar" required><br>
-        <button type="submit">Criar Técnico</button>
-    </form>
-    <p id="resultadoCriar"></p>
-</section>
+    <!-- Buscar Todos os Técnicos -->
+    <div class="form-section">
+        <h2>Buscar Todos os Técnicos</h2>
+        <button onclick="buscarTodosTecnicos()">Buscar Todos</button>
+        <div id="todos-tecnicos"></div>
+    </div>
 
-<!-- Buscar Técnico -->
-<section id="buscarTecnico">
-    <h2>Buscar Técnico</h2>
-    <form id="formBuscarTecnico">
-        <label for="idBuscar">ID:</label>
-        <input type="number" id="idBuscar" required><br>
-        <button type="submit">Buscar Técnico</button>
-    </form>
-    <pre id="resultadoBuscar"></pre>
-</section>
+    <!-- Criar Técnico -->
+    <div class="form-section">
+        <h2>Criar Técnico</h2>
+        <form id="criar-tecnico-form">
+            <input type="text" id="nome" placeholder="Nome" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="id" placeholder="ID do Tecnico" required>
+            <button type="button" onclick="criarTecnico()">Criar</button>
+        </form>
+        <div id="resultado-criar"></div>
+    </div>
 
-<!-- Atualizar Técnico -->
-<section id="atualizarTecnico">
-    <h2>Atualizar Técnico</h2>
-    <form id="formAtualizarTecnico">
-        <label for="idAtualizar">ID:</label>
-        <input type="number" id="idAtualizar" required><br>
-        <label for="nomeAtualizar">Nome:</label>
-        <input type="text" id="nomeAtualizar" required><br>
-        <label for="emailAtualizar">Email:</label>
-        <input type="email" id="emailAtualizar" required><br>
-        <label for="equipeAtualizar">Equipe:</label>
-        <input type="text" id="equipeAtualizar" required><br>
-        <button type="submit">Atualizar Técnico</button>
-    </form>
-    <p id="resultadoAtualizar"></p>
-</section>
+    <!-- Buscar Técnico -->
+    <div class="form-section">
+        <h2>Buscar Técnico</h2>
+        <input type="number" id="id-buscar" placeholder="ID do Técnico" required>
+        <button onclick="buscarTecnico()">Buscar</button>
+        <div id="resultado-buscar"></div>
+    </div>
 
-<!-- Deletar Técnico -->
-<section id="deletarTecnico">
-    <h2>Deletar Técnico</h2>
-    <form id="formDeletarTecnico">
-        <label for="idDeletar">ID:</label>
-        <input type="number" id="idDeletar" required><br>
-        <button type="submit">Deletar Técnico</button>
-    </form>
-    <p id="resultadoDeletar"></p>
-</section>
+    <!-- Atualizar Técnico -->
+    <div class="form-section">
+        <h2>Atualizar Técnico</h2>
+        <input type="number" id="id-atualizar" placeholder="ID do Técnico" required>
+        <input type="text" id="nome-atualizar" placeholder="Nome">
+        <input type="email" id="email-atualizar" placeholder="Email">
+        <input type="text" id="endereco-atualizar" placeholder="Endereço">
+        <button onclick="atualizarTecnico()">Atualizar</button>
+        <div id="resultado-atualizar"></div>
+    </div>
 
-<!-- Listar Técnicos -->
-<section id="listarTecnicos">
-    <h2>Listar Técnicos</h2>
-    <button id="btnListarTecnicos">Listar Todos</button>
-    <ul id="listaTecnicos"></ul>
-</section>
+    <!-- Deletar Técnico -->
+    <div class="form-section">
+        <h2>Deletar Técnico</h2>
+        <input type="number" id="id-deletar" placeholder="ID do Técnico" required>
+        <button onclick="deletarTecnico()">Deletar</button>
+        <div id="resultado-deletar"></div>
+    </div>
+</div>
 
 <script src="/js/tecnicos.js"></script>
 </body>

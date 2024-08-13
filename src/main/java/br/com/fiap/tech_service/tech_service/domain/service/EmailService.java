@@ -81,10 +81,10 @@ public class EmailService {
         );
     }
 
-    public String gerarEmailValidacaoChamado(Long chamadoId,String usuario) {
+    public String gerarEmailValidacaoChamado(Long chamadoId,String usuario, Equipe equipe, String status) {
         return "<html>" +
                 "<body>" +
-                "<h1>Chamado Validado</h1>" +
+                "<h1>Chamado Validado com status:"+status+"</h1>" +
                 "<p>O usuário <strong>" + usuario + "</strong> validou o chamado de ID: <strong>" + chamadoId + "</strong>.</p>" +
                 "<p>O chamado está pronto para ser analisado pelo tecnico.</p>" +
                 "</body>" +

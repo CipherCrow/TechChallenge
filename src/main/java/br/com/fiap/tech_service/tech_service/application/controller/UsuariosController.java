@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/usuarios")
 public class UsuariosController {
@@ -42,7 +41,7 @@ public class UsuariosController {
         try {
             Usuarios usuario = usuarioService.criarUsuario(usuariosDTO);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Usuário criado com sucesso: " + UsuariosMapper.toDTO(usuario));
+                    .body(UsuariosMapper.toDTO(usuario));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body("Erro: " + ex.getMessage());
         } catch (Exception e) {
@@ -68,7 +67,7 @@ public class UsuariosController {
     public ResponseEntity<Object> atualizarUsuario(@RequestBody UsuariosDTO usuariosDTO) {
         try {
             Usuarios usuarioAtualizado = usuarioService.atualizarUsuario(usuariosDTO);
-            return ResponseEntity.ok("Usuário atualizado com sucesso: " + UsuariosMapper.toDTO(usuarioAtualizado));
+            return ResponseEntity.ok(UsuariosMapper.toDTO(usuarioAtualizado));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body("Erro: " + ex.getMessage());
         } catch (Exception e) {

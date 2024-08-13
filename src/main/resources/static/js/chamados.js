@@ -1,170 +1,106 @@
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('formAbrirChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const usuarioId = document.getElementById('usuarioId').value;
-        const tipoSolicitacao = document.getElementById('tipoSolicitacao').value;
+    const apiUrl = 'http://localhost:8080/chamados';
+
+    function abrirChamado() {
+        const usuarioId = document.getElementById('usuario-id').value;
+        const tipoSolicitacao = document.getElementById('tipo-solicitacao').value;
         const descricao = document.getElementById('descricao').value;
 
-        fetch('/chamados/abrir', {
+        fetch(`${apiUrl}/abrir`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ usuarioId, tipoSolicitacao, descricao })
         })
         .then(response => response.json())
-        .then(data => alert('Chamado aberto com sucesso! ID: ' + data.id))
-        .catch(error => alert('Erro ao abrir chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-abrir').innerText = `Chamado aberto: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-abrir').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formEnviarParaArea').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const chamadoId = document.getElementById('chamadoId').value;
-        const equipe = document.getElementById('equipe').value;
+    function enviarParaArea() {
+        const id = document.getElementById('id-enviar').value;
+        const equipe = document.getElementById('equipe-enviar').value;
 
-        fetch(`/chamados/enviar-para-area`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chamadoId, equipe })
-        })
+        fetch(`${apiUrl}/enviarParaArea/${id}?equipe=${equipe}`, { method: 'PUT' })
         .then(response => response.json())
-        .then(data => alert('Chamado enviado para área com sucesso!'))
-        .catch(error => alert('Erro ao enviar chamado para área: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-enviar').innerText = `Chamado enviado: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-enviar').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formVisualizarChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const idChamado = document.getElementById('idChamado').value;
+    function visualizarChamado() {
+        const id = document.getElementById('id-visualizar').value;
 
-        fetch(`/chamados/${idChamado}`, {
-            method: 'GET'
-        })
+        fetch(`${apiUrl}/visualizar/${id}`, { method: 'PUT' })
         .then(response => response.json())
-        .then(data => {
-            document.getElementById('resultadoVisualizarChamado').innerHTML = `
-                <p>ID: ${data.id}</p>
-                <p>Descrição: ${data.descricao}</p>
-                <p>Status: ${data.status}</p>
-                <p>Data Abertura: ${data.dataAbertura}</p>
-                <p>Data Atualização: ${data.dataAtualizacao}</p>
-            `;
-        })
-        .catch(error => alert('Erro ao visualizar chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-visualizar').innerText = `Chamado visualizado: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-visualizar').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formTratarChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const chamadoId = document.getElementById('chamadoIdTratar').value;
-        const observacoes = document.getElementById('observacoes').value;
+    function tratarChamado() {
+        const idChamado = document.getElementById('id-tratar').value;
+        const idTecnico = document.getElementById('id-tecnico-tratar').value;
 
-        fetch(`/chamados/tratar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chamadoId, observacoes })
-        })
+        fetch(`${apiUrl}/tratar/${idChamado}/${idTecnico}`, { method: 'PUT' })
         .then(response => response.json())
-        .then(data => alert('Chamado tratado com sucesso!'))
-        .catch(error => alert('Erro ao tratar chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-tratar').innerText = `Chamado tratado: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-tratar').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formSolucionarChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const chamadoId = document.getElementById('chamadoIdSolucionar').value;
-        const solucao = document.getElementById('solucao').value;
+    function solucionarChamado() {
+        const id = document.getElementById('id-solucionar').value;
+        const descricao = document.getElementById('descricao-solucionar').value;
 
-        fetch(`/chamados/solucionar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chamadoId, solucao })
-        })
+        fetch(`${apiUrl}/solucionar/${id}?descricao=${descricao}`, { method: 'PUT' })
         .then(response => response.json())
-        .then(data => alert('Chamado solucionado com sucesso!'))
-        .catch(error => alert('Erro ao solucionar chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-solucionar').innerText = `Chamado solucionado: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-solucionar').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formReavaliarChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const chamadoId = document.getElementById('chamadoIdReavaliar').value;
-        const novaDescricao = document.getElementById('novaDescricao').value;
+    function reavaliarChamado() {
+        const id = document.getElementById('id-reavaliar').value;
 
-        fetch(`/chamados/reavaliar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chamadoId, novaDescricao })
-        })
+        fetch(`${apiUrl}/reavaliar/${id}`, { method: 'PUT' })
         .then(response => response.json())
-        .then(data => alert('Chamado reavaliado com sucesso!'))
-        .catch(error => alert('Erro ao reavaliar chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-reavaliar').innerText = `Chamado reavaliado: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-reavaliar').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formValidarChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const chamadoId = document.getElementById('chamadoIdValidar').value;
-        const validado = document.getElementById('validado').value === 'true';
+    function validarChamado() {
+        const id = document.getElementById('id-validar').value;
+        const isValidado = document.getElementById('is-validado').value;
 
-        fetch(`/chamados/validar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chamadoId, validado })
-        })
+        fetch(`${apiUrl}/validar/${id}?isValidado=${isValidado}`, { method: 'PUT' })
         .then(response => response.json())
-        .then(data => alert('Chamado validado com sucesso!'))
-        .catch(error => alert('Erro ao validar chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-validar').innerText = `Chamado validado: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-validar').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formEncerrarChamado').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const chamadoId = document.getElementById('chamadoIdEncerrar').value;
+    function encerrarChamado() {
+        const id = document.getElementById('id-encerrar').value;
 
-        fetch(`/chamados/encerrar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chamadoId })
+        fetch(`${apiUrl}/encerrar/${id}`, { method: 'PUT' })
+         .then(response => {
+            if (!response.ok) {
+                return response.text().then(error => Promise.reject(new Error(error)));
+            }
+            return response.text();
         })
+        .then(message => document.getElementById('resultado-encerrar').innerText = message)
+        .catch(error => document.getElementById('resultado-encerrar').innerText = `Erro: ${error.message}`);
+    }
+
+    function buscarChamadosPorStatus() {
+        const status = document.getElementById('status-buscar').value;
+
+        fetch(`${apiUrl}/status/${status}`, { method: 'GET' })
         .then(response => response.json())
-        .then(data => alert('Chamado encerrado com sucesso!'))
-        .catch(error => alert('Erro ao encerrar chamado: ' + error.message));
-    });
+        .then(data => document.getElementById('resultado-buscar-status').innerText = `Chamados encontrados: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-buscar-status').innerText = `Erro: ${error.message}`);
+    }
 
-    document.getElementById('formBuscarStatus').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const status = document.getElementById('status').value;
+    function buscarChamadosPorEquipe() {
+        const equipe = document.getElementById('equipe-buscar').value;
 
-        fetch(`/chamados/status/${status}`, {
-            method: 'GET'
-        })
+        fetch(`${apiUrl}/equipe?equipe=${equipe}`, { method: 'GET' })
         .then(response => response.json())
-        .then(data => {
-            const resultHtml = data.map(chamado => `
-                <div>
-                    <p>ID: ${chamado.id}</p>
-                    <p>Descrição: ${chamado.descricao}</p>
-                    <p>Status: ${chamado.status}</p>
-                    <p>Data Abertura: ${chamado.dataAbertura}</p>
-                </div>
-            `).join('');
-            document.getElementById('resultadoBuscaStatus').innerHTML = resultHtml;
-        })
-        .catch(error => alert('Erro ao buscar chamados por status: ' + error.message));
-    });
-
-    document.getElementById('formBuscarEquipe').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const equipe = document.getElementById('equipeBuscar').value;
-
-        fetch(`/chamados/equipe/${equipe}`, {
-            method: 'GET'
-        })
-        .then(response => response.json())
-        .then(data => {
-            const resultHtml = data.map(chamado => `
-                <div>
-                    <p>ID: ${chamado.id}</p>
-                    <p>Descrição: ${chamado.descricao}</p>
-                    <p>Status: ${chamado.status}</p>
-                    <p>Data Abertura: ${chamado.dataAbertura}</p>
-                </div>
-            `).join('');
-            document.getElementById('resultadoBuscaEquipe').innerHTML = resultHtml;
-        })
-        .catch(error => alert('Erro ao buscar chamados por equipe: ' + error.message));
-    });
-});
+        .then(data => document.getElementById('resultado-buscar-equipe').innerText = `Chamados encontrados: ${JSON.stringify(data)}`)
+        .catch(error => document.getElementById('resultado-buscar-equipe').innerText = `Erro: ${error.message}`);
+    }

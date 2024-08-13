@@ -17,4 +17,5 @@ public interface ChamadosRepository extends JpaRepository<Chamados, Long> {
     List<Chamados> findByStatus(Status status);
     List<Chamados> findByEquipe(Equipe equipe);
     List<Chamados> findByUsuarioId(Long idUsuario);
+    List<Chamados> findByTecnicoId(Long idTecnico);
 }
