@@ -253,4 +253,17 @@ public class ChamadosService {
         }
         return chamadoRepository.findByTecnicoId(idTecnico);
     }
+  
+    public void removerAtendenteDosChamados(List<Chamados> chamados) {
+        for (Chamados chamado : chamados) {
+            chamado.setTecnico(null);
+            chamadoRepository.save(chamado);
+        }
+    }
+  
+    public void alterarStatusDosChamados(List<Chamados> chamados,Status status) {
+        for (Chamados chamado : chamados) {
+            chamado.setStatus(status);
+            chamadoRepository.save(chamado);
+        }
 }

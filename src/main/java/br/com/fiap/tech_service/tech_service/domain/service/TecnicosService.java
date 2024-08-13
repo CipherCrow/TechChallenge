@@ -4,6 +4,7 @@ import br.com.fiap.tech_service.tech_service.application.dto.TecnicosDTO;
 import br.com.fiap.tech_service.tech_service.application.mapper.TecnicosMapper;
 import br.com.fiap.tech_service.tech_service.domain.entities.Chamados;
 import br.com.fiap.tech_service.tech_service.domain.entities.Tecnicos;
+import br.com.fiap.tech_service.tech_service.domain.entities.enums.Status;
 import br.com.fiap.tech_service.tech_service.domain.exceptions.TecnicoNotFoundException;
 import br.com.fiap.tech_service.tech_service.domain.repository.ChamadosRepository;
 import br.com.fiap.tech_service.tech_service.domain.repository.TecnicosRepository;
@@ -21,6 +22,8 @@ public class TecnicosService {
 
     @Autowired
     private ChamadosRepository chamadosRepository;
+    @Autowired
+    private ChamadosService chamadosService;
 
     public List<Tecnicos> buscarTodosTecnicos() {
         return tecnicoRepository.findAll();
@@ -48,6 +51,7 @@ public class TecnicosService {
 
         tecnico.setNome(tecnicosDTO.nome());
         tecnico.setEmail(tecnicosDTO.email());
+        tecnico.setEquipe(tecnicosDTO.equipe());
         return tecnicoRepository.save(tecnico);
     }
 
@@ -57,8 +61,16 @@ public class TecnicosService {
             throw new TecnicoNotFoundException(idTecnico);
         }
         List<Chamados> chamados = chamadosRepository.findByTecnicoId(idTecnico);
-        chamadosRepository.deleteAll(chamados);
+        //chamadosRepository.deleteAll(chamados);
 
+        if(!chamados.isEmpty() && chamados != null){
+            try{
+                chamadosService.removerAtendenteDosChamados(chamados);
+                chamadosService.alterarStatusDosChamados(chamados, Status.ABERTO);
+            }catch (Exception e){
+                throw new RuntimeException("Houve um problema ao modificar os agendamentos do tecnico.");
+            }
+        }
         tecnicoRepository.deleteById(idTecnico);
     }
 }
