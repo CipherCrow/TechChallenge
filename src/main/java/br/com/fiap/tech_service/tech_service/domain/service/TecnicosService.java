@@ -4,12 +4,15 @@ import br.com.fiap.tech_service.tech_service.application.dto.TecnicosDTO;
 import br.com.fiap.tech_service.tech_service.application.mapper.TecnicosMapper;
 import br.com.fiap.tech_service.tech_service.domain.entities.Chamados;
 import br.com.fiap.tech_service.tech_service.domain.entities.Tecnicos;
+import br.com.fiap.tech_service.tech_service.domain.exceptions.TecnicoNotFoundException;
 import br.com.fiap.tech_service.tech_service.domain.repository.ChamadosRepository;
 import br.com.fiap.tech_service.tech_service.domain.repository.TecnicosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
 @Service
 public class TecnicosService {
 
@@ -24,9 +27,7 @@ public class TecnicosService {
     }
 
     public Tecnicos criarTecnico(TecnicosDTO tecnicosDTO) {
-        if (tecnicosDTO.id() == null) {
-            throw new IllegalArgumentException("ID não pode ser nulo");
-        }
+        Objects.requireNonNull(tecnicosDTO.id(), "ID não pode ser nulo");
         if (tecnicoRepository.existsById(tecnicosDTO.id())) {
             throw new IllegalArgumentException("ID já existe");
         }
@@ -35,19 +36,15 @@ public class TecnicosService {
     }
 
     public Tecnicos buscarTecnico(Long idTecnico) {
-        if (idTecnico == null) {
-            throw new IllegalArgumentException("ID não pode ser nulo");
-        }
+        Objects.requireNonNull(idTecnico, "ID não pode ser nulo");
         return tecnicoRepository.findById(idTecnico)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com ID: " + idTecnico));
+                .orElseThrow(() -> new TecnicoNotFoundException(idTecnico));
     }
 
     public Tecnicos atualizarTecnico(TecnicosDTO tecnicosDTO) {
-        if (tecnicosDTO.id() == null) {
-            throw new IllegalArgumentException("ID não pode ser nulo");
-        }
+        Objects.requireNonNull(tecnicosDTO.id(), "ID não pode ser nulo");
         Tecnicos tecnico = tecnicoRepository.findById(tecnicosDTO.id())
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com ID: " + tecnicosDTO.id()));
+                .orElseThrow(() -> new TecnicoNotFoundException(tecnicosDTO.id()));
 
         tecnico.setNome(tecnicosDTO.nome());
         tecnico.setEmail(tecnicosDTO.email());
@@ -55,11 +52,9 @@ public class TecnicosService {
     }
 
     public void deletarTecnico(Long idTecnico) {
-        if (idTecnico == null) {
-            throw new IllegalArgumentException("ID não pode ser nulo");
-        }
+        Objects.requireNonNull(idTecnico, "ID não pode ser nulo");
         if (!tecnicoRepository.existsById(idTecnico)) {
-            throw new IllegalArgumentException("Técnico não encontrado com ID: " + idTecnico);
+            throw new TecnicoNotFoundException(idTecnico);
         }
         List<Chamados> chamados = chamadosRepository.findByTecnicoId(idTecnico);
         chamadosRepository.deleteAll(chamados);

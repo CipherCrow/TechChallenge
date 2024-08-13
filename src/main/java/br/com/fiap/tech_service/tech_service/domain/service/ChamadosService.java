@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ChamadosService {
@@ -36,12 +37,12 @@ public class ChamadosService {
     private EmailService emailService;
 
     public Chamados abrirChamado(Long usuarioId, Equipe tipoSolicitacao, String descricao) {
-        try {
-            logger.info("Abrindo chamado para o usuário ID: {}, tipo de solicitação: {}, descrição: {}", usuarioId, tipoSolicitacao, descricao);
 
+        logger.info("Abrindo chamado para o usuário ID: {}, tipo de solicitação: {}, descrição: {}", usuarioId, tipoSolicitacao, descricao);
+        try {
             Chamados chamado = new Chamados();
             chamado.setUsuario(usuarioRepository.findById(usuarioId)
-                    .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado")));
+                    .orElseThrow(() -> new UsuarioNotFoundException(usuarioId)));
             chamado.setEquipe(tipoSolicitacao);
             chamado.setDescricao(descricao);
             chamado.setStatus(Status.ABERTO);
@@ -73,7 +74,7 @@ public class ChamadosService {
             logger.info("Enviando chamado ID: {} para a área: {}", chamadoId, equipe);
 
             Chamados chamado = chamadoRepository.findById(chamadoId)
-                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException(chamadoId));
             chamado.setStatus(Status.ENVIADO_PARA_AREA);
             chamado.setEquipe(equipe);
 
@@ -94,7 +95,7 @@ public class ChamadosService {
             logger.info("Visualizando chamado ID: {}", id);
 
             Chamados chamado = chamadoRepository.findById(id)
-                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException(id));
             chamado.setDataVisualizacao(LocalDateTime.now());
             chamado.setStatus(Status.VISUALIZADO);
 
@@ -107,9 +108,9 @@ public class ChamadosService {
 
     public Chamados tratarChamado(Long id, Long tecnicoId) {
         Chamados chamado = chamadoRepository.findById(id)
-                .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                .orElseThrow(() -> new ChamadoNotFoundException(id));
         Tecnicos tecnico = tecnicoRepository.findById(tecnicoId)
-                .orElseThrow(() -> new TecnicoNotFoundException("Técnico não encontrado"));
+                .orElseThrow(() -> new TecnicoNotFoundException(tecnicoId));
 
         if (!tecnico.getEquipe().equals(chamado.getEquipe())) {
             throw new RuntimeException("O técnico não pode tratar chamados de outra equipe");
@@ -134,7 +135,7 @@ public class ChamadosService {
 
     public Chamados solucionarChamado(Long id, String descricaoSolucao) {
         Chamados chamado = chamadoRepository.findById(id)
-                .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                .orElseThrow(() -> new ChamadoNotFoundException(id));
 
         if (!chamado.getStatus().equals(Status.EM_EXECUCAO)) {
             throw new RuntimeException("O chamado deve estar em execução para ser solucionado");
@@ -145,7 +146,7 @@ public class ChamadosService {
         chamado.setStatus(Status.AGUARDANDO_VALIDACAO);
 
         Tecnicos tecnico = tecnicoRepository.findById(chamado.getTecnico().getId())
-                .orElseThrow(() -> new TecnicoNotFoundException("Técnico não encontrado"));
+                .orElseThrow(() -> new TecnicoNotFoundException(chamado.getTecnico().getId()));
 
         try {
             String emailUsuario = chamado.getUsuario().getEmail();
@@ -164,7 +165,7 @@ public class ChamadosService {
             logger.info("Reavaliando chamado ID: {}", id);
 
             Chamados chamado = chamadoRepository.findById(id)
-                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException(id));
 
             chamado.setDataReavaliacao(LocalDateTime.now());
             chamado.setStatus(Status.REAVALIADO);
@@ -180,7 +181,7 @@ public class ChamadosService {
         logger.info("Iniciando validação do chamado com ID: {}", chamadoId);
         try {
             Chamados chamado = chamadoRepository.findById(chamadoId)
-                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException(chamadoId));
 
             if (!Status.AGUARDANDO_VALIDACAO.equals(chamado.getStatus())) {
                 throw new RuntimeException("Chamado não pode ser validado, pois não está no status de 'Aguardando Validação'");
@@ -211,7 +212,7 @@ public class ChamadosService {
             logger.info("Encerrando chamado ID: {}", id);
 
             Chamados chamado = chamadoRepository.findById(id)
-                    .orElseThrow(() -> new ChamadoNotFoundException("Chamado não encontrado"));
+                    .orElseThrow(() -> new ChamadoNotFoundException(id));
 
             if (!Status.VALIDADO.equals(chamado.getStatus())) {
                 throw new RuntimeException("O chamado deve estar validado para ser encerrado");
@@ -235,5 +236,21 @@ public class ChamadosService {
     public List<Chamados> buscarChamadosPorEquipe(Equipe equipe) {
         logger.info("Buscando chamados para a equipe: {}", equipe);
         return chamadoRepository.findByEquipe(equipe);
+    }
+
+    public List<Chamados> buscarChamadoPorUsuario(Long idUsuario) {
+        Objects.requireNonNull(idUsuario, "ID não pode ser nulo");
+        if (!usuarioRepository.existsById(idUsuario)) {
+            throw  new UsuarioNotFoundException(idUsuario);
+        }
+        return chamadoRepository.findByUsuarioId(idUsuario);
+    }
+
+    public List<Chamados> buscarChamadoPorTecnico(Long idTecnico) {
+        Objects.requireNonNull(idTecnico, "ID não pode ser nulo");
+        if (!tecnicoRepository.existsById(idTecnico)) {
+            throw  new TecnicoNotFoundException(idTecnico);
+        }
+        return chamadoRepository.findByTecnicoId(idTecnico);
     }
 }

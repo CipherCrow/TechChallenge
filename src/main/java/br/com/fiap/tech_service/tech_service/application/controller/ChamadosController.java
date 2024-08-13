@@ -142,4 +142,41 @@ public class ChamadosController {
                     .body("Erro ao buscar os chamados: " + e.getMessage());
         }
     }
+
+    @GetMapping("/usuarios")
+    public ResponseEntity<Object> buscarChamadosPorUsuario(@RequestParam Long idUsuario) {
+        try {
+            List<Chamados> chamadosList = chamadoService.buscarChamadoPorUsuario(idUsuario);
+            if (chamadosList.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(
+                    chamadosList.stream()
+                            .map(ChamadosMapper::toDTO)
+                            .collect(Collectors.toList())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao buscar os chamados: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/tecnicos")
+    public ResponseEntity<Object> buscarChamadosPorTecnico(@RequestParam Long idTecnico) {
+        try {
+            List<Chamados> chamadosList = chamadoService.buscarChamadoPorTecnico(idTecnico);
+            if (chamadosList.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(
+                    chamadosList.stream()
+                            .map(ChamadosMapper::toDTO)
+                            .collect(Collectors.toList())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao buscar os chamados: " + e.getMessage());
+        }
+    }
+
 }
