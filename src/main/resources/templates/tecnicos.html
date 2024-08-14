@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Técnicos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Gerenciamento de Técnicos</h1>
+
+    <!-- Buscar Todos os Técnicos -->
+    <div class="form-section">
+        <h2>Buscar Todos os Técnicos</h2>
+        <button onclick="buscarTodosTecnicos()">Buscar Todos</button>
+        <div id="todos-tecnicos"></div>
+    </div>
+
+    <!-- Criar Técnico -->
+    <div class="form-section">
+        <h2>Criar Técnico</h2>
+        <form id="criar-tecnico-form">
+            <input type="text" id="nome" placeholder="Nome" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="id" placeholder="ID do Tecnico" required>
+            <button type="button" onclick="criarTecnico()">Criar</button>
+        </form>
+        <div id="resultado-criar"></div>
+    </div>
+
+    <!-- Buscar Técnico -->
+    <div class="form-section">
+        <h2>Buscar Técnico</h2>
+        <input type="number" id="id-buscar" placeholder="ID do Técnico" required>
+        <button onclick="buscarTecnico()">Buscar</button>
+        <div id="resultado-buscar"></div>
+    </div>
+
+    <!-- Atualizar Técnico -->
+    <div class="form-section">
+        <h2>Atualizar Técnico</h2>
+        <input type="number" id="id-atualizar" placeholder="ID do Técnico" required>
+        <input type="text" id="nome-atualizar" placeholder="Nome">
+        <input type="email" id="email-atualizar" placeholder="Email">
+        <input type="text" id="endereco-atualizar" placeholder="Endereço">
+        <input type="text" id="equipe-atualizar" placeholder="Equipe">
+        <button onclick="atualizarTecnico()">Atualizar</button>
+        <div id="resultado-atualizar"></div>
+    </div>
+
+    <!-- Deletar Técnico -->
+    <div class="form-section">
+        <h2>Deletar Técnico</h2>
+        <input type="number" id="id-deletar" placeholder="ID do Técnico" required>
+        <button onclick="deletarTecnico()">Deletar</button>
+        <div id="resultado-deletar"></div>
+    </div>
+</div>
+
+<script src="/js/tecnicos.js"></script>
+</body>
+</html>

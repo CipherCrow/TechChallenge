@@ -1,5 +1,7 @@
 package br.com.fiap.tech_service.tech_service.application.dto;
 
+import br.com.fiap.tech_service.tech_service.domain.entities.Tecnicos;
+import br.com.fiap.tech_service.tech_service.domain.entities.Usuarios;
 import br.com.fiap.tech_service.tech_service.domain.entities.enums.Equipe;
 import br.com.fiap.tech_service.tech_service.domain.entities.enums.Status;
 
@@ -7,9 +9,9 @@ import java.time.LocalDateTime;
 
 public record ChamadosDTO(
         Long id,
-        Long usuarioId,
-        Long tecnicoId,
-        Equipe tipoSolicitacao,
+        Usuarios usuario,
+        Tecnicos tecnico,
+        Equipe equipe,
         String descricao,
         Status status,
         LocalDateTime dataAbertura,
@@ -17,5 +19,6 @@ public record ChamadosDTO(
         LocalDateTime dataTratamento,
         LocalDateTime dataSolucao,
         LocalDateTime dataReavaliacao,
-        LocalDateTime dataEncerramento
+        LocalDateTime dataEncerramento,
+        Boolean priorizado
 ) {}

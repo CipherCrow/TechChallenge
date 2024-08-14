@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciamento de Usuários</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">
+    <img src="/img/fiap-plus-alura.svg" alt="Logo">
+  </div>
+  <h1>Gerenciamento de Usuários</h1>
+
+  <!-- Buscar Todos os Usuários -->
+  <div class="form-section">
+    <h2>Buscar Todos os Usuários</h2>
+    <button onclick="buscarTodosUsuarios()">Buscar Todos</button>
+    <div id="todos-usuarios"></div>
+  </div>
+
+  <!-- Criar Usuário -->
+  <div class="form-section">
+    <h2>Criar Usuário</h2>
+    <form id="criar-usuario-form">
+      <input type="text" id="nome" placeholder="Nome" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="endereco" placeholder="Endereço" required>
+      <input type="text" id="id" placeholder="ID do Usuario" required>
+      <button type="button" onclick="criarUsuario()">Criar</button>
+    </form>
+    <div id="resultado-criar"></div>
+  </div>
+
+  <!-- Buscar Usuário -->
+  <div class="form-section">
+    <h2>Buscar Usuário</h2>
+    <input type="number" id="id-buscar" placeholder="ID do Usuário" required>
+    <button onclick="buscarUsuario()">Buscar</button>
+    <div id="resultado-buscar"></div>
+  </div>
+
+  <!-- Atualizar Usuário -->
+  <div class="form-section">
+    <h2>Atualizar Usuário</h2>
+    <input type="number" id="id-atualizar" placeholder="ID do Usuário" required>
+    <input type="text" id="nome-atualizar" placeholder="Nome">
+    <input type="email" id="email-atualizar" placeholder="Email">
+    <input type="text" id="endereco-atualizar" placeholder="Endereço">
+    <button onclick="atualizarUsuario()">Atualizar</button>
+    <div id="resultado-atualizar"></div>
+  </div>
+
+  <!-- Deletar Usuário -->
+  <div class="form-section">
+    <h2>Deletar Usuário</h2>
+    <input type="number" id="id-deletar" placeholder="ID do Usuário" required>
+    <button onclick="deletarUsuario()">Deletar</button>
+    <div id="resultado-deletar"></div>
+  </div>
+</div>
+
+<script src="/js/usuarios.js"></script>
+</body>
+</html>

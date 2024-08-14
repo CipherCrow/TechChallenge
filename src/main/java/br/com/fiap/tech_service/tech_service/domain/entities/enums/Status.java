@@ -4,9 +4,10 @@ public enum Status {
     ABERTO,
     ENVIADO_PARA_AREA,
     VISUALIZADO,
-    EM_TRATAMENTO,
-    SOLUCIONADO,
+    EM_EXECUCAO,
     REAVALIADO,
+    VALIDADO,
+    AGUARDANDO_VALIDACAO,
     ENCERRADO;
 
     Status() {

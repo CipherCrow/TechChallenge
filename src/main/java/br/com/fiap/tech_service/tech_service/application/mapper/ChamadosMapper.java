@@ -9,9 +9,9 @@ public class ChamadosMapper {
     public static ChamadosDTO toDTO(Chamados chamado) {
         return new ChamadosDTO(
                 chamado.getId(),
-                chamado.getUsuario() != null ? chamado.getUsuario().getId() : null,
-                chamado.getTecnico() != null ? chamado.getTecnico().getId() : null,
-                chamado.getTipoSolicitacao(),
+                chamado.getUsuario() != null ? chamado.getUsuario() : null,
+                chamado.getTecnico() != null ? chamado.getTecnico() : null,
+                chamado.getEquipe(),
                 chamado.getDescricao(),
                 chamado.getStatus(),
                 chamado.getDataAbertura(),
@@ -19,14 +19,15 @@ public class ChamadosMapper {
                 chamado.getDataTratamento(),
                 chamado.getDataSolucao(),
                 chamado.getDataReavaliacao(),
-                chamado.getDataEncerramento()
+                chamado.getDataEncerramento(),
+                chamado.isPriorizado()
         );
     }
 
     public static Chamados toEntity(ChamadosDTO dto) {
         Chamados chamado = new Chamados();
         chamado.setId(dto.id());
-        chamado.setTipoSolicitacao(dto.tipoSolicitacao());
+        chamado.setEquipe(dto.equipe());
         chamado.setDescricao(dto.descricao());
         chamado.setStatus(dto.status());
         chamado.setDataAbertura(dto.dataAbertura());
@@ -35,6 +36,9 @@ public class ChamadosMapper {
         chamado.setDataSolucao(dto.dataSolucao());
         chamado.setDataReavaliacao(dto.dataReavaliacao());
         chamado.setDataEncerramento(dto.dataEncerramento());
+        chamado.setPriorizado(dto.priorizado());
+        chamado.setTecnico(dto.tecnico());
+        chamado.setUsuario(dto.usuario());
         return chamado;
     }
 }

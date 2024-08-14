@@ -23,12 +23,14 @@ public class Chamados {
     private Tecnicos tecnico;
 
     @Enumerated(EnumType.STRING)
-    private Equipe tipoSolicitacao;
+    private Equipe equipe;
 
     private String descricao;
 
     @Enumerated(EnumType.STRING)
     private Status status;
+    @Column(name = "priorizado")
+    private Boolean priorizado;
 
     private LocalDateTime dataAbertura;
     private LocalDateTime dataVisualizacao;
@@ -37,13 +39,13 @@ public class Chamados {
     private LocalDateTime dataReavaliacao;
     private LocalDateTime dataEncerramento;
 
-    public Chamados(Long id, Usuarios usuario, Tecnicos tecnico, Equipe tipoSolicitacao, String descricao,
+    public Chamados(Long id, Usuarios usuario, Tecnicos tecnico, Equipe equipe, String descricao,
                     Status status, LocalDateTime dataAbertura, LocalDateTime dataVisualizacao, LocalDateTime dataTratamento,
-                    LocalDateTime dataSolucao, LocalDateTime dataReavaliacao, LocalDateTime dataEncerramento) {
+                    LocalDateTime dataSolucao, LocalDateTime dataReavaliacao, LocalDateTime dataEncerramento,Boolean priorizado) {
         this.id = id;
         this.usuario = usuario;
         this.tecnico = tecnico;
-        this.tipoSolicitacao = tipoSolicitacao;
+        this.equipe = equipe;
         this.descricao = descricao;
         this.status = status;
         this.dataAbertura = dataAbertura;
@@ -52,6 +54,8 @@ public class Chamados {
         this.dataSolucao = dataSolucao;
         this.dataReavaliacao = dataReavaliacao;
         this.dataEncerramento = dataEncerramento;
+        this.priorizado = false;
+
     }
 
     public Chamados() {
@@ -146,11 +150,19 @@ public class Chamados {
         this.dataEncerramento = dataEncerramento;
     }
 
-    public Equipe getTipoSolicitacao() {
-        return tipoSolicitacao;
+    public Equipe getEquipe() {
+        return equipe;
     }
 
-    public void setTipoSolicitacao(Equipe tipoSolicitacao) {
-        this.tipoSolicitacao = tipoSolicitacao;
+    public void setEquipe(Equipe equipe) {
+        this.equipe = equipe;
+    }
+
+    public boolean isPriorizado() {
+        return priorizado;
+    }
+
+    public void setPriorizado(boolean priorizado) {
+        this.priorizado = priorizado;
     }
 }
