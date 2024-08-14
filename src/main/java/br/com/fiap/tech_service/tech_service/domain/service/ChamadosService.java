@@ -73,17 +73,23 @@ public class ChamadosService {
         try {
             logger.info("Enviando chamado ID: {} para a área: {}", chamadoId, equipe);
 
-            Chamados chamado = chamadoRepository.findById(chamadoId)
-                    .orElseThrow(() -> new ChamadoNotFoundException(chamadoId));
-            chamado.setStatus(Status.ENVIADO_PARA_AREA);
-            chamado.setEquipe(equipe);
+                Chamados chamado = chamadoRepository.findById(chamadoId)
+                        .orElseThrow(() -> new ChamadoNotFoundException(chamadoId));
 
-            String emailEquipe = emailService.obterEmailEquipe(equipe);
-            String emailChamadoEnviado = emailService.gerarEmailChamadoEnviado(chamado.getId(), equipe);
-            emailService.enviarEmail(emailEquipe, "Chamado enviado para a área", emailChamadoEnviado);
-            logger.info("Notificação de chamado enviado para a área enviada para a equipe: {}", emailEquipe);
+                if (!chamado.getStatus().equals(Status.ENCERRADO)) {
+                chamado.setStatus(Status.ENVIADO_PARA_AREA);
+                chamado.setEquipe(equipe);
 
-            return chamadoRepository.save(chamado);
+                String emailEquipe = emailService.obterEmailEquipe(equipe);
+                String emailChamadoEnviado = emailService.gerarEmailChamadoEnviado(chamado.getId(), equipe);
+                emailService.enviarEmail(emailEquipe, "Chamado enviado para a área", emailChamadoEnviado);
+                logger.info("Notificação de chamado enviado para a área enviada para a equipe: {}", emailEquipe);
+
+                return chamadoRepository.save(chamado);
+            } else {
+
+                    throw new RuntimeException("O Chamado nao pode ser enviado para outra area pois esta com status Encerrado");
+            }
         } catch (Exception e) {
             logger.error("Erro ao enviar chamado para a área: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao enviar chamado para a área: " + e.getMessage(), e);
@@ -192,7 +198,7 @@ public class ChamadosService {
 
                 logger.info("Chamado ID: {} foi validado e finalizado", chamadoId);
             } else {
-                chamado.setStatus(Status.ABERTO);
+                chamado.setStatus(Status.EM_EXECUCAO);
                 logger.info("Chamado ID: {} foi marcado como inválido", chamadoId);
             }
             String emailEquipe = emailService.obterEmailEquipe(chamado.getEquipe());
