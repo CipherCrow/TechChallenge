@@ -199,6 +199,8 @@ public class ChamadosService {
                 logger.info("Chamado ID: {} foi validado e finalizado", chamadoId);
             } else {
                 chamado.setStatus(Status.EM_EXECUCAO);
+                chamado.setStatus(Status.ABERTO);
+                chamado.setPriorizado(true);
                 logger.info("Chamado ID: {} foi marcado como inválido", chamadoId);
             }
             String emailEquipe = emailService.obterEmailEquipe(chamado.getEquipe());
